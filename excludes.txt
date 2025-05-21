@@ -1,0 +1,19 @@
+# exclude foo/x/y/z/bar foo/x/bar foo/bar
+foo/**/bar
+# exclude virtual environments
+venv/
+*/.venv
+# exclude logs
+/opt/homebrew/**/*.log
+# exclude node modules
+*/node_modules
+# exclude go modules
+**/go/pkg/*
+*/go.work
+# exclude vscode files
+*/.vscode
+# exclude maven repositories
+*/.m2
+# exclude caches
+*/cache*
+*/Cache*

@@ -1,0 +1,11 @@
+######## START CONFIG ########
+REPO_NAME="<"
+GLOBAL_FLAGS="--cleanup-cache --verbose"
+# GLOBAL_FLAGS="--verbose"
+MOUNT_POINT="<your_mount_point>"
+SFTP_HOST="<your_sftp_host>"
+SFTP_BASEDIR="<your_sftp_basedir>"
+RESTIC_USER="<your_restic_user>"
+FILES="$HOME/.restic/files.txt"
+EXCLUDES="$HOME/.restic/excludes.txt"
+######## END CONFIG ########
