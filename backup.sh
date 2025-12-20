@@ -24,19 +24,13 @@ set -e
 
 ######## START CONFIG ########
 REPO_NAME="my-backup"
-GLOBAL_FLAGS="--cleanup-cache --verbose"
-# GLOBAL_FLAGS="--verbose"
-# MOUNT_POINT="/mnt/backup"
-# SFTP_HOST="<your_sftp_host>"
-# SFTP_BASEDIR="restic"
-# RESTIC_USER="<your_sftp_user>"
+GLOBAL_FLAGS="--verbose=2"
 FILES="${HOME}/.restic/files.txt"
 EXCLUDES="${HOME}/.restic/excludes.txt"
-
 ######## END CONFIG ########
 
 # Overwriteenvironment variables
-. .env
+. "$HOME/.restic//.env"
 
 function usage() {
   echo "Usage: $0 [options]"
@@ -44,6 +38,7 @@ function usage() {
   echo "  -h, --help        Show this help message"
   echo "  -b, --backup      Perform backup"
   echo "  -c, --check       Check repository"
+  echo "  -i, --info        Get repository stats"
   echo "  -l, --list        List files in the repository"
   echo "  -p, --prune       Prune unwanted data"
   echo "  -r, --restore     Restore files from the repository"
@@ -62,6 +57,7 @@ function parse_args() {
       -h|--help) usage; exit 0 ;;
       -b|--backup) perform_backup ;;
       -c|--check) check  ;;
+      -i|--info) info  ;;
       -l|--list) list-files ;;
       -p|--prune) prune ;;
       -r|--restore) restore ;;
@@ -84,6 +80,14 @@ function check() {
   echo "Performing backup check ..."
   if [ ! "$(restic ${GLOBAL_FLAGS} check)" ]; then
     echo "Repository check failed. Exiting."
+    exit 1
+  fi
+}
+
+function info() {
+  echo "Getting repository stats ..."
+  if [ ! "$(restic ${GLOBAL_FLAGS} stats)" ]; then
+    echo "Getting repository stats failed. Exiting."
     exit 1
   fi
 }
@@ -117,7 +121,7 @@ function list-files() {
 
 function prune() {
   echo "Pruning old snapshots ..."
-  restic "${GLOBAL_FLAGS}" prune
+  restic "${GLOBAL_FLAGS}" forget --keep-daily 7 --keep-weekly 4 --keep-monthly 6 --keep-yearly 2 --prune
 }
 
 function unlock() {
@@ -142,14 +146,15 @@ function perform_backup() {
   prepare_repo
 
   # perform backups
-  # backup
+  backup
 
   # post-backup check
   echo "Performing post backup check..."
   check
 
   # clean up old snapshots
-  # cleanup
+  echo "Performing housekeeping and clean-up old snapshots..."
+  cleanup
 
   # final check
   echo "Performing final backup check..."
@@ -173,7 +178,7 @@ else
 fi
 
 # DEBUG
-env | sort
+# env | sort
 
 parse_args "$@"
 
