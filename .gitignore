@@ -1,0 +1,6 @@
+.env
+.set-env.sh
+.store
+.store_remote
+.minio
+*.log
