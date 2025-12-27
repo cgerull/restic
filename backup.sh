@@ -111,7 +111,7 @@ function backup() {
 
 function snapshots() {
   echo "Listing restic snapshots ..."
-  restic snapshots
+  restic snapshots -c
 }
 
 function list-files() {
